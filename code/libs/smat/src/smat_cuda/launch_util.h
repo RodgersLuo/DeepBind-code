@@ -64,7 +64,7 @@
 #endif
 
 #ifdef __CUDACC__
-SM_DEVICE_INLINE double atomicAdd(double* address, double val)
+SM_DEVICE_INLINE double myAtomicAdd(double* address, double val)
 {
 	unsigned long long* address_as_ull = (unsigned long long*)address;
 	unsigned long long old = *address_as_ull, assumed;

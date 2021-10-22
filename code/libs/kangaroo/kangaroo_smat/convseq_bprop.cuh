@@ -124,7 +124,7 @@ void convseq_bprop_kernel(const uint8_t* samples, usize_t nsample,
 					// we added "apron" elements from the next block to the end of s_samples.
 					uint32_t q = s_samples[i+t];
 					if (q < nchannel)
-						atomicAdd(&s_filters[f][t][q],d);
+						myAtomicAdd(&s_filters[f][t][q],d);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ void convseq_bprop_kernel(const uint8_t* samples, usize_t nsample,
 	filters += filter_elem_per_block*bx; // Jump to start of filters for this block.
 	#pragma unroll
 	for (unsigned i = tid; i < filters_this_block*filter_elem; i += nthread)
-		atomicAdd(&filters[i],((float_t*)s_filters)[i]); // TODO: design around the atomicAdds!!
+		myAtomicAdd(&filters[i],((float_t*)s_filters)[i]); // TODO: design around the myAtomicAdd!!
 }
 
 
@@ -222,7 +222,7 @@ void convseq_bprop_kernel_applysegs(const uint8_t*  samples,  usize_t nsample,
 					uint32_t q = s_samples[t];
 					float_t d = this_deltas[ty*nfilter + f];
 					if (q < nchannel)
-						atomicAdd(&filters[f*filter_elem + (samples_this_seg-ty+t)*nchannel + q],-d);
+						myAtomicAdd(&filters[f*filter_elem + (samples_this_seg-ty+t)*nchannel + q],-d);
 				}
 			}
 		}

@@ -133,7 +133,7 @@ void corr1ord_bprop_W_kernel(      float_t* __restrict__ dW, unsigned m, unsigne
 			for (unsigned __j = 0; __j<__m && (!check_m || j+__j<m); ++__j) {    SM_TRACE("dW[%d,:,%d]=__dW[%d,:]\n",j+__j,f,__j);
 			#pragma unroll
 			for (unsigned k = 0; k < nchannel; ++k)
-				atomicAdd(&dW[(nchannel*(j+__j) + k)*nfilter + f], __dW[__j][k]);
+				myAtomicAdd(&dW[(nchannel*(j+__j) + k)*nfilter + f], __dW[__j][k]);
 		}
 	}
 }

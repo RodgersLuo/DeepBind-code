@@ -54,7 +54,7 @@ void poolrgn_bprop_max_kernel(      float_t*  unpooledmaps, usize_t n,
 	const unsigned gdx = gridDim.x;
 	#pragma unroll
 	for (usize_t i = (usize_t)bdx*bx+tx; i < n; i += bdx*gdx)
-		atomicAdd(&unpooledmaps[pooledmaps_argmax[i]],pooledmaps[i]);
+		myAtomicAdd(&unpooledmaps[pooledmaps_argmax[i]],pooledmaps[i]);
 }
 
 
@@ -87,7 +87,7 @@ void poolrgn_bprop_sum_kernel(      float_t*  unpooledmaps, usize_t nfeaturemap,
 
 	#pragma unroll
 	for (uindex_t i = first; i < last; i += nfeaturemap*step)
-		atomicAdd(&unpooledmaps[i],pval);
+		myAtomicAdd(&unpooledmaps[i],pval);
 }
 
 template <unsigned bdx,               // = 32 threads per block in "filters" dimension
@@ -122,8 +122,8 @@ void poolrgn_bprop_all_kernel(      float_t*  unpooledmaps, usize_t nfeaturemap,
 
 	#pragma unroll
 	for (uindex_t i = first; i < last; i += nfeaturemap*step)
-		atomicAdd(&unpooledmaps[i],dyval);
-	atomicAdd(&unpooledmaps[pooledmaps_argmax[j]],dxval);
+		myAtomicAdd(&unpooledmaps[i],dyval);
+	myAtomicAdd(&unpooledmaps[pooledmaps_argmax[j]],dxval);
 }
 
 #endif // __KR_POOLRGN_BPROP_H__
